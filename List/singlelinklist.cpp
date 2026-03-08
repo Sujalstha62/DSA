@@ -170,12 +170,13 @@ void remove(){
 void display(){
 	if(start==NULL){
 		cout<<"List empty!!\n";
+		return;
 	}
 	t=start;
 	cout<<"LIST\n";
 	while(t!=NULL){
-			cout<<t->data<<" ";
-			t=t->next;
+		cout<<t->data<<" ";
+		t=t->next;
 	}
 	return;
 }

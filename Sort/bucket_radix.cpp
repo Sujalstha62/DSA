@@ -19,8 +19,12 @@ void bucket(int a[],int b[],int n){
 			max=a[i];
 		}
 	}
+	while(max!=0){
+		max=max/10;
+		d++;
+	}
 	int div=1;
-	for(int i=0;i<max;i++){
+	for(int i=0;i<d;i++){
 		sort(a,b,div,n);
 		div*=10;
 		for (int i = 0; i < n; i++) {

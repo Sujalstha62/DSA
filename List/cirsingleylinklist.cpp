@@ -1,9 +1,12 @@
 #include<iostream>
 using namespace std;
-struct node{
-	int data;
-	node *next;
-}*t,*start=NULL;
+
+struct node {
+    int data;
+    node *next;
+} *t, *start = NULL;
+
+// Helper function to find the tail of the list
 node* getLastNode() {
     if (start == NULL) return NULL;
     node* temp = start;
@@ -12,132 +15,147 @@ node* getLastNode() {
     }
     return temp;
 }
-void addfirst(){
-	int x;
-	cout<<"Enter a value:";
-	cin>>x;
-	node* newn = new node;
-	newn->data=x;
-	if(start==NULL){
-		start=newn;
-		newn->next=start;
-	}
-	else{
-		t=getLastNode();
-		newn->next=start;
-		start=newn;
-		t->next=start;
-	}
-}
-void addinbetween(){
-	int x;
-	if(start == NULL){
-        cout << "List is empty\n";
-        return;
+
+void addfirst() {
+    int x;
+    cout << "Enter a value: ";
+    cin >> x;
+    node* newn = new node;
+    newn->data = x;
+    
+    if (start == NULL) {
+        start = newn;
+        newn->next = start; // Points to itself
+    } else {
+        node* tail = getLastNode();
+        newn->next = start;
+        start = newn;
+        tail->next = start; // Tail must point to new start
     }
-	t=start;
-	int index,i=0;
-	cout<<"Enter postition and value:";
-	cin>>index>>x;
-	if(index == 0){
+}
+
+void addinbetween() {
+    if (start == NULL) {
+        cout << "List is empty, adding at first position...\n";
         addfirst();
         return;
     }
-	node* newn= new node;
-	newn->data=x;
-	while(i<index-2 && t->next!=start){
-		t=t->next;
-		i++;
-	}
-	newn->next=t->next;
-	t->next=newn;
-}
-void addlast(){
-	int x;
-	cout<<"Enter a value:";
-	cin>>x;
-	node* newn = new node;
-	newn->data=x;
-	newn->next=start;
-	if (start == NULL) {
+    
+    int x, index, i = 1;
+    cout << "Enter position (1-based) and value: ";
+    cin >> index >> x;
+
+    if (index <= 1) {
+        // We can't easily call addfirst() here because it asks for 'x' again.
+        // Simplified logic:
+        node* newn = new node;
+        newn->data = x;
+        node* tail = getLastNode();
+        newn->next = start;
         start = newn;
+        tail->next = start;
         return;
     }
-	t=getLastNode();
-	t->next=newn;
-}
-int removefirst(){
-	int x;
-	if(start == NULL){
-		cout<<"List is empty\n";
-		return 0;
-	}
-	node *temp = start;
-	x=start->data;
-	if(start->next==start){
-		delete start;
-		start=NULL;
-		return x;
-	}
-	t=getLastNode();
-	start = start->next;
-	t->next=start;
-	delete temp;
-	return x;
-}
-int removebetween(){
-	int x;
-    int idx, i = 0;
-    cout << "Enter the position of node to remove:";
-    cin >> idx;
-    if(idx < 1){
-        cout << "Error input!\n";
-        return 0;
-    }
-    if(start == NULL){
-        cout << "List empty\n";
-        return 0;
-    }
-    if(idx == 1){
-        x=removefirst();
-        return x;
-    }
-    node *temp = start;
-    while(i < idx - 2){
-        if(temp->next == start){
-            cout << "Invalid position\n";
-            return 0;
-        }
-        temp = temp->next;
+
+    t = start;
+    // Traverse to the node before the target position
+    while (i < index - 1 && t->next != start) {
+        t = t->next;
         i++;
     }
-    if(temp->next == start){
-        cout << "Invalid position\n";
-        return 0;
-    }
-    node* del = temp->next;
-    x = del->data;
-    temp->next = del->next;
-    delete del;
-    return x;
+
+    node* newn = new node;
+    newn->data = x;
+    newn->next = t->next;
+    t->next = newn;
 }
-int removelast() {
-	int x;
+
+void addlast() {
+    if (start == NULL) {
+        addfirst();
+        return;
+    }
+    int x;
+    cout << "Enter a value: ";
+    cin >> x;
+    node* newn = new node;
+    newn->data = x;
+    
+    node* tail = getLastNode();
+    tail->next = newn;
+    newn->next = start; // Complete the circle
+}
+
+int removefirst() {
     if (start == NULL) {
         cout << "List is empty\n";
         return 0;
     }
-    if (start->next == start) {
-    	x=removefirst();
-    	return x;
+    int x = start->data;
+    node *temp = start;
+
+    if (start->next == start) { // Only one node
+        delete start;
+        start = NULL;
+    } else {
+        node* tail = getLastNode();
+        start = start->next;
+        tail->next = start; // Link tail to new head
+        delete temp;
     }
-    t=start;
-    while (t->next->next != start) {
+    cout << "Removed: " << x << endl;
+    return x;
+}
+
+int removebetween() {
+    if (start == NULL) {
+        cout << "List empty\n";
+        return 0;
+    }
+
+    int idx, i = 1;
+    cout << "Enter the position of node to remove: ";
+    cin >> idx;
+
+    if (idx <= 1) return removefirst();
+
+    node *curr = start;
+    node *prev = NULL;
+
+    while (i < idx) {
+        prev = curr;
+        curr = curr->next;
+        i++;
+        if (curr == start) {
+            cout << "Invalid position!\n";
+            return 0;
+        }
+    }
+
+    int x = curr->data;
+    prev->next = curr->next;
+    delete curr;
+    cout << "Removed: " << x << endl;
+    return x;
+}
+
+int removelast() {
+    if (start == NULL) {
+        cout << "List is empty\n";
+        return 0;
+    }
+    if (start->next == start) return removefirst();
+
+    t = start;
+    node* prev = NULL;
+    while (t->next != start) {
+        prev = t;
         t = t->next;
     }
-    x=t->next->data;
-    delete t->next;
-    t->next=start;
+    int x = t->data;
+    prev->next = start; // Penultimate node now points to start
+    delete t;
+    cout << "Removed: " << x << endl;
     return x;
 }
 void add(){

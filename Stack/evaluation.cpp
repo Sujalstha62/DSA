@@ -1,6 +1,5 @@
 #include<iostream>
 #include<string>
-#include<cctype>
 #include<math.h>
 #define max 20
 using namespace std;

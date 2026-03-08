@@ -12,12 +12,12 @@ void selection(int a[], int n){
 	}
 }
 void binsearch(int a[],int x,int p,int q){
-	int search=p+(p-q)/2;
+	int search=p+(q-p)/2;
 	if(p>q){
 		cout<<x<<" doesn't exist!!";
 		return;
 	} 
-	if(a[search]==x){
+	else if(a[search]==x){
 		cout<<"Found at position "<<search+1;
 		return;
 	}
