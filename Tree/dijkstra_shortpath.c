@@ -1,107 +1,71 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-
-#define N 20
-#define INF 999999
-
-// 1. Graph Structure
-typedef struct {
-    int vertices;
-    int adj[N][N];
-} Graph;
-
-void initGraph(Graph* g, int v) {
-	int i,j;
-    g->vertices = v;
-    for (i = 0; i < v; i++) {
-        for (j = 0; j < v; j++) {
-            g->adj[i][j] = (i == j) ? 0 : INF;
+#include <stdbool.h>
+#define MAX 20
+#define INF 9999
+int minDistance(int dist[], bool visited[], int V) {
+    int min = INF, min_index,v;
+    for (v = 0; v < V; v++) {
+        if (visited[v] == false && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
         }
     }
+    return min_index;
 }
-
-// 2. Dijkstra's Logic
-void dijkstra(Graph* g, int startNode) {
-	int i,count;
-    int dist[N];     // Shortest distance from source to i
-    int visited[N];  // visited[i] will be true if vertex i is finalized
-
-    // Initialize all distances as INFINITE and visited[] as false
-    for (i = 0; i < g->vertices; i++) {
+void dijkstra(int graph[MAX][MAX], int V, int src) {
+    int dist[MAX],i,count,v;
+    bool visited[MAX];
+    for (i = 0; i < V; i++) {
         dist[i] = INF;
-        visited[i] = 0;
+        visited[i] = false;
     }
-
-    // Distance of source vertex from itself is always 0
-    dist[startNode] = 0;
-
-    for (count = 0; count < g->vertices - 1; count++) {
-    	int v,i;
-        // Pick the minimum distance vertex from the set of vertices not yet processed
-        int min = INF, u;
-
-        for (v = 0; v < g->vertices; v++) {
-            if (!visited[v] && dist[v] <= min) {
-                min = dist[v], u = v;
-            }
-        }
-
-        // Mark the picked vertex as processed
-        visited[u] = 1;
-
-        // Update dist value of the adjacent vertices of the picked vertex
-        for (v = 0; v < g->vertices; v++) {
-            /* Update dist[v] only if:
-               1. It's not visited
-               2. There is an edge from u to v
-               3. Total weight of path from source to v through u is smaller than current dist[v]
-            */
-            if (!visited[v] && g->adj[u][v] != INF && dist[u] != INF 
-                && dist[u] + g->adj[u][v] < dist[v]) {
-                dist[v] = dist[u] + g->adj[u][v];
+    dist[src] = 0;
+    for (count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, visited, V);
+        visited[u] = true;
+        for (v = 0; v < V; v++) {
+            if (!visited[v] && graph[u][v] != 0 && dist[u] != INF 
+                && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
             }
         }
     }
-
-    // 3. Display the shortest distances
-    printf("\nVertex \t Distance from Source (%d)\n", startNode);
-    for (i = 0; i < g->vertices; i++) {
-        if (dist[i] == INF) printf("%d \t INF\n", i);
-        else printf("%d \t %d\n", i, dist[i]);
+    printf("\nVertex \t Distance from Source (%d)\n", src);
+    for (i = 0; i < V; i++) {
+        if (dist[i] == INF)
+            printf("%d \t INF\n", i);
+        else
+            printf("%d \t %d\n", i, dist[i]);
     }
 }
-
 int main() {
-    Graph g;
-    int v,i, e, src, dest, weight, startNode;
-    char ch;
-
-    do {
-        printf("Enter number of vertices: ");
-        scanf("%d", &v);
-        initGraph(&g, v);
-
-        printf("Enter number of edges: ");
-        scanf("%d", &e);
-
-        for (i = 0; i < e; i++) {
-            printf("Edge %d (src dest weight): ", i + 1);
-            scanf("%d %d %d", &src, &dest, &weight);
-            if (src < v && dest < v) {
-                g.adj[src][dest] = weight; // Directed graph logic
-                // g.adj[dest][src] = weight; // Uncomment for Undirected
-            }
+    int graph[MAX][MAX];
+    int V, E,i,j, u, v, w, startNode;
+    printf("Enter number of vertices (max %d): ", MAX);
+    scanf("%d", &V);
+    // Initialize matrix with 0 (no edges)
+    for (i = 0; i < V; i++)
+        for (j = 0; j < V; j++)
+            graph[i][j] = 0;
+    printf("Enter number of edges: ");
+    scanf("%d", &E);
+    for (i = 0; i < E; i++) {
+        printf("Edge %d (src dest weight): ", i + 1);
+        scanf("%d %d %d", &u, &v, &w);
+        if (u < V && v < V) {
+            graph[u][v] = w;
+            graph[v][u] = w; // Remove this line if the graph is directed
+        } else {
+            printf("Invalid vertex! Try again.\n");
+            i--;
         }
-
-        printf("Enter the starting node for Dijkstra: ");
-        scanf("%d", &startNode);
-
-        dijkstra(&g, startNode);
-
-        printf("\nEnter 'Y' for new session: ");
-        scanf(" %c", &ch);
-    } while (ch == 'y' || ch == 'Y');
-
+    }
+    printf("\nEnter the starting node (0 to %d): ", V - 1);
+    scanf("%d", &startNode);
+    if (startNode < V) {
+        dijkstra(graph, V, startNode);
+    } else {
+        printf("Invalid starting node.\n");
+    }
     return 0;
 }

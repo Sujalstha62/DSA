@@ -29,12 +29,8 @@ int main(){
 	printf("Enter the size of array:");
 	scanf("%d",&n);
 	printf("Enter values:");
-	for(i=0;i<n;i++){
-		scanf("%d",&arr[i]);
-	}
+	for(i=0;i<n;i++) scanf("%d",&arr[i]);
 	shell_sort(arr,n);
 	printf("Sorted array!!\n");
-	for(i=0;i<n;i++){
-		printf("%d\t",arr[i]);
-	}
+	for(i=0;i<n;i++) printf("%d\t",arr[i]);
 }

@@ -19,11 +19,7 @@ int main(){
 	printf("Enter no of terms:");
 	scanf("%d",&n);
 	printf("Enter values:");
-	for(i=0;i<n;i++){
-		scanf("%d",&a[i]);
-	}
+	for(i=0;i<n;i++)scanf("%d",&a[i]);
 	insertion(a,n);
-	for(i=0;i<n;i++){
-		printf("%d\t",a[i]);
-	}
+	for(i=0;i<n;i++)printf("%d\t",a[i]);
 }
