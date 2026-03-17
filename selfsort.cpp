@@ -34,39 +34,43 @@ public:
     }
 };
 void stacksort(int a[],int n){
-	int i,x;
+	int i,x,t=n;
 	Stack A(n);
 	while(n>1){
 		A.push(0);
 		for(i=1;i<n;i++){
-			if(a[i]>a[A.peek()])
+			if(a[i]>=a[A.peek()])
 				A.push(i);
+		}
+		i--;
+		x=A.peek();
+		while(a[i]==a[x]){
+			n--;
+			i--;
+			x=A.pop();
 		}
 		while(!A.isempty()){
 			x=A.pop();
-			while(a[i]==a[x]){
-				n--;
-				i--;
-				x=A.pop();
-			}
 			while(a[i]>a[x] && i!=0)i--;
 			if(i!=0){
 				int temp=a[i];
 				a[i]=a[x];
 				a[x]=temp;
+				i--;
 			}
 		}
-		n--;
+		for(int i=0;i<t;i++)
+		cout<<a[i]<<"\t";
+		cout<<endl;
 	}
 }
 int main(){
-	int n,a[N];
-	cout<<"Enter no of terms:";
-	cin>>n;
+	int n=0,a[N];
 	cout<<"Enter values:";
-	for(int i=0;i<n;i++)
-		cin>>a[i];
+	while(cin>>a[n++]);
+	n--;
 	stacksort(a,n);
+	cout<<endl<<"Final Sorted array!!\n";
 	for(int i=0;i<n;i++)
 		cout<<a[i]<<"\t";
 }
