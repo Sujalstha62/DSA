@@ -34,11 +34,11 @@ public:
     }
 };
 void stacksort(int a[],int n){
-	int i,x,t=n;
+	int i,x,t=n,low=0;
 	Stack A(n);
-	while(n>1){
-		A.push(0);
-		for(i=1;i<n;i++){
+	while(n-low>1){
+		A.push(low);
+		for(i=low+1;i<n;i++){
 			if(a[i]>=a[A.peek()])
 				A.push(i);
 		}
@@ -48,8 +48,9 @@ void stacksort(int a[],int n){
 			n--;
 			i--;
 			x=A.pop();
+			x=A.peek();
 		}
-		while(!A.isempty()){
+		while(!A.isempty() && i>low){
 			x=A.pop();
 			while(a[i]>a[x] && i!=0)i--;
 			if(i!=0){
@@ -59,8 +60,31 @@ void stacksort(int a[],int n){
 				i--;
 			}
 		}
+		A.push(n-1);
+		for(i=n-2;i>=low;i--){
+			if(a[i]<=a[A.peek()])
+				A.push(i);
+		}
+		i=low;
+		x=A.peek();
+		while(a[i]==a[x]){
+			low++;
+			i++;
+			x=A.pop();
+			x=A.peek();
+		}
+		while(!A.isempty() && i<n){
+			x=A.pop();
+			while(a[i]<a[x] && i!=n-1)i++;
+			if(i!=n-1){
+				int temp=a[i];
+				a[i]=a[x];
+				a[x]=temp;
+				i++;
+			}
+		}
 		for(int i=0;i<t;i++)
-		cout<<a[i]<<"\t";
+		cout<<a[i]<<" ";
 		cout<<endl;
 	}
 }
